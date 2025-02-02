@@ -127,22 +127,22 @@ int main()
                     string editSub,newSub;
                     float newScore = 0;
                     missEditSub:
-                    bool isSub = 0;
+                    bool isEditSub = 0;
                     for(int i = 0; i < list[editIndex].subjects.size(); i++){
                         cout << i+1 << "-" << list[editIndex].subjects[i] << " " << list[editIndex].scores[i] << "\n";
                     }
                     cout << "Enter the subject you want to edit : ";
                     cin >> editSub;
                     for(int i = 0; i < list[editIndex].subjects.size(); i++){
-                        if(editSub == list[editIndex].subjects[i] && isSub == 0){
+                        if(editSub == list[editIndex].subjects[i] && isEditSub == 0){
                             cout << "Enter your student new subject and new score : ";
                             cin >> newSub >> newScore;
                             list[editIndex].subjects[i] = newSub;
                             list[editIndex].scores[i] = newScore;
-                            isSub = 1;
+                            isEditSub = 1;
                         }
                     }
-                    if(isSub == 0){
+                    if(isEditSub == 0){
                         cout << "Please enter a valid subject\n";
                         goto missEditSub;
                     }
@@ -153,8 +153,61 @@ int main()
                 }
             }
         }break;
-        // case 4:{
-        // }break;
+        case 4:{
+            if(haveStudent == 0){
+                cout << "You don`t have a student yet\n";
+                continue;
+            }
+            missIdDelete:
+            int tempIdDelete;
+            cout << "Enter id of student you want to delete his/her info\n";
+            cin >> tempIdDelete;
+            int deleteIndex = -1;
+            for(int i = 0; i < listSize; i++){
+                if(list[i].id == tempIdDelete)
+                    deleteIndex = i;
+            }
+            if (deleteIndex == -1){
+                cout << "There is no student with this id, Try again!\n";
+                goto missIdDelete;
+            }
+            else{
+                string DeleteTask;
+                missDeleteTask:
+                cout << "Which one do you wnat to delete (\'student\' , \'subject\'): ";
+                cin >> DeleteTask;
+                if(DeleteTask == "student"){
+                    cout << "Student " << tempIdDelete << " has been deleted\n";
+                    list[deleteIndex].id = -1;
+                }
+                else if(DeleteTask == "subject"){
+                    string deleteSub;
+                    missDeleteSub:
+                    for(int i = 0; i < list[deleteIndex].subjects.size(); i++){
+                        cout << i+1 << "-" << list[deleteIndex].subjects[i] << " " << list[deleteIndex].scores[i] << "\n";
+                    }
+                    cout << "Enter the subject you want to delete : ";
+                    cin >> deleteSub;
+                    bool isDeleteSub;
+                    for(int i = 0; i < list[deleteIndex].subjects.size(); i++){
+                        if(deleteSub == list[deleteIndex].subjects[i]){
+                            list[deleteIndex].subjects.erase(list[deleteIndex].subjects.begin() + i);
+                            list[deleteIndex].scores.erase(list[deleteIndex].scores.begin() + i);
+                            isDeleteSub = true;
+                            cout << "Subject " << deleteSub << " has been deleted\n";
+                        }
+                    }
+                    if(isDeleteSub == false){
+                        cout << "Please enter a valid subject\n";
+                        goto missDeleteSub;
+                    }
+                }
+                else{
+                    cout << "Please enter a valid option\n";
+                    goto missDeleteTask;
+                }
+            }
+        }break;
         // case 5:{
         // }break;
         // case 6:{
