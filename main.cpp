@@ -9,6 +9,7 @@ struct student
     string lastName;
     string major;
     vector<string> subjects;
+    vector<int> units;
     vector<float> scores;
     float avgScore = 0;
 };
@@ -73,19 +74,22 @@ int main()
                 goto missIdAdd;
             }
             else{
-                int point;
+                int point,uni,uniCounter = 0;
                 string sub;
                 do{
-                    cout << "Enter your student subject and score : (Enter \'quit\' to return to menu)\n";
+                    cout << "Enter your student subject, unit of subject and score : (Enter \'quit\' to return to menu)\n";
                     cin >> sub;
                     if(sub == "quit")
                         break;
+                    cin >> uni;
                     cin >> point;
                     list[addIndex].subjects.push_back(sub);
+                    list[addIndex].units.push_back(uni);
                     list[addIndex].scores.push_back(point);
-                    list[addIndex].avgScore += point;
+                    list[addIndex].avgScore += point * uni;
+                    uniCounter += uni;
                 }while (1);
-                list[addIndex].avgScore /= list[addIndex].scores.size();
+                list[addIndex].avgScore /= uniCounter;
             }
         }break;
         case 3:{
@@ -126,18 +130,20 @@ int main()
                 else if(editTask == "subject"){
                     string editSub,newSub;
                     float newScore = 0;
+                    int newUnit;
                     missEditSub:
                     bool isEditSub = 0;
                     for(int i = 0; i < list[editIndex].subjects.size(); i++){
-                        cout << i+1 << "-" << list[editIndex].subjects[i] << " " << list[editIndex].scores[i] << "\n";
+                        cout << i+1 << "-" << list[editIndex].subjects[i] << " - unit : " << list[editIndex].units[i] << " - score : "<< list[editIndex].scores[i] << "\n";
                     }
                     cout << "Enter the subject you want to edit : ";
                     cin >> editSub;
                     for(int i = 0; i < list[editIndex].subjects.size(); i++){
                         if(editSub == list[editIndex].subjects[i] && isEditSub == 0){
-                            cout << "Enter your student new subject and new score : ";
-                            cin >> newSub >> newScore;
+                            cout << "Enter your student new subject, new unit of subject and new score : ";
+                            cin >> newSub >> newUnit >> newScore;
                             list[editIndex].subjects[i] = newSub;
+                            list[editIndex].units[i] = newUnit;
                             list[editIndex].scores[i] = newScore;
                             isEditSub = 1;
                         }
@@ -184,7 +190,7 @@ int main()
                     string deleteSub;
                     missDeleteSub:
                     for(int i = 0; i < list[deleteIndex].subjects.size(); i++){
-                        cout << i+1 << "-" << list[deleteIndex].subjects[i] << " " << list[deleteIndex].scores[i] << "\n";
+                        cout << i+1 << "-" << list[deleteIndex].subjects[i] << " - unit : " << list[deleteIndex].units[i] << " - score : " << list[deleteIndex].scores[i] << "\n";
                     }
                     cout << "Enter the subject you want to delete : ";
                     cin >> deleteSub;
