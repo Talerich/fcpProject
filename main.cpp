@@ -5,7 +5,7 @@
 using namespace std;
 struct student
 {
-    int id;
+    int id = -1;
     string firstName;
     string lastName;
     string major;
@@ -58,7 +58,6 @@ unvalidSize:
             {
                 for (int i = 0; i < listSize; i++)
                 {
-                    bool isMajor = false;
                     cout << "Enter student full name : \n";
                     cin >> list[i].firstName >> list[i].lastName;
                 notUniqeId:
@@ -84,15 +83,6 @@ unvalidSize:
                     }
                     cout << "Enter student major : \n";
                     cin >> list[i].major;
-                    for (int j = 0; majorList[j] != "\0"; j++)
-                    {
-                        if (list[i].major == majorList[j])
-                            isMajor = true;
-                    }
-                    if (!isMajor)
-                    {
-                        majorList.push_back(list[i].major);
-                    }
                 }
                 haveStudent = 1;
             }
@@ -110,6 +100,13 @@ unvalidSize:
                 continue;
             }
         missIdAdd:
+            for (int i = 0; i < listSize; i++)
+                {
+                    if (list[i].id != -1)
+                    {
+                        cout << i + 1 << "-" << list[i].firstName << " " << list[i].lastName << " -Id: " << list[i].id << " -Major: " << list[i].major << "\n";
+                    }
+                }
             int tempIdadd = -1;
             cout << "Enter id of student you want to add info about\n";
             cin >> tempIdadd;
@@ -132,13 +129,14 @@ unvalidSize:
                 string sub;
                 do
                 {
-                    cout << "Enter your student subject, unit of subject and score : (Enter \'quit\' to return to menu)\n";
+                    cout << "Enter your student subject : (Enter \'quit\' to return to menu)\n";
                     cin >> sub;
                     if (sub == "quit")
                     {
                         break;
                     }
                 unvalidUnit:
+                    cout << "Enter the subject`s unit : \n"; 
                     cin >> uni;
                     if (uni < 1)
                     {
@@ -146,6 +144,7 @@ unvalidSize:
                         goto unvalidUnit;
                     }
                 unvalidPoint:
+                    cout << "Enter the subject`s score : \n"; 
                     cin >> point;
                     if ((point < 0) || (point > 20))
                     {
@@ -174,6 +173,13 @@ unvalidSize:
                 continue;
             }
         missIdEdit:
+            for (int i = 0; i < listSize; i++)
+                {
+                    if (list[i].id != -1)
+                    {
+                        cout << "\t" << list[i].firstName << " " << list[i].lastName << " -Id: " << list[i].id << " -Major: " << list[i].major << "\n";
+                    }
+                }
             int tempIdEdit;
             cout << "Enter id of student you want to edit his/her info\n";
             cin >> tempIdEdit;
@@ -238,11 +244,6 @@ unvalidSize:
                     }
                     cout << "Enter student new major : \n";
                     cin >> list[editIndex].major;
-                    if (uniqeMajor)
-                    {
-                        majorList.erase(majorList.begin() + editIndex);
-                        majorList.push_back(list[editIndex].major);
-                    }
                 }
                 else if (editTask == "subject")
                 {
@@ -312,6 +313,13 @@ unvalidSize:
                 continue;
             }
         missIdDelete:
+            for (int i = 0; i < listSize; i++)
+                {
+                    if (list[i].id != -1)
+                    {
+                        cout << "\t" << list[i].firstName << " " << list[i].lastName << " -Id: " << list[i].id << " -Major: " << list[i].major << "\n";
+                    }
+                }
             int tempIdDelete;
             cout << "Enter id of student you want to delete his/her info\n";
             cin >> tempIdDelete;
@@ -334,24 +342,7 @@ unvalidSize:
                 cin >> DeleteTask;
                 if (DeleteTask == "student")
                 {
-                    cout << "Student " << tempIdDelete << " has been deleted\n";
-                    bool uniqeDeleteMajor = true;
-                    for (int i = 0; i < listSize; i++)
-                    {
-                        if (i == deleteIndex)
-                        {
-                            continue;
-                        }
-                        if (list[i].major == list[deleteIndex].major)
-                        {
-                            uniqeDeleteMajor = false;
-                            break;
-                        }
-                    }
-                    if (uniqeDeleteMajor)
-                    {
-                        majorList.erase(majorList.begin() + deleteIndex);
-                    }
+                    cout << "Student " << list[deleteIndex].firstName << " " << list[deleteIndex].lastName << " has been deleted\n";
                     list[deleteIndex].id = -1;
                 }
                 else if (DeleteTask == "subject")
@@ -397,6 +388,22 @@ unvalidSize:
         {
         missShowList:
             string showList;
+            majorList.clear();
+            bool isMajor = false;
+            for(int i = 0; i < listSize; i++){
+                if(list[i].id == -1){
+                    continue;
+                }
+                for (int j = 0; j < majorList.size(); j++)
+                    {
+                        if (list[i].major == majorList[j])
+                            isMajor = true;
+                    }
+                    if (!isMajor)
+                    {
+                        majorList.push_back(list[i].major);
+                    }
+            }
             sortList(list, listSize);
             cout << "1-All students\n";
             for (int i = 0; i < majorList.size(); i++)
@@ -411,7 +418,7 @@ unvalidSize:
                 {
                     if (list[i].id != -1)
                     {
-                        cout << i + 1 << "-" << list[i].firstName << " " << list[i].lastName << " -Id: " << list[i].id << " -Major: " << list[i].major << " -Average score: " << list[i].avgScore << "\n";
+                        cout << "\t" << list[i].firstName << " " << list[i].lastName << " -Id: " << list[i].id << " -Major: " << list[i].major << " -Average score: " << list[i].avgScore << "\n";
                     }
                 }
             }
@@ -420,10 +427,10 @@ unvalidSize:
                 bool epmtyList = true;
                 for (int i = 0; i < listSize; i++)
                 {
-                    if (list[i].major == showList)
+                    if (list[i].major == showList && list[i].id != -1)
                     {
                         epmtyList = false;
-                        cout << i + 1 << "-" << list[i].firstName << " " << list[i].lastName << " -Id: " << list[i].id << " -Major: " << list[i].major << " -Average score: " << list[i].avgScore << "\n";
+                        cout << "\t" << list[i].firstName << " " << list[i].lastName << " -Id: " << list[i].id << " -Major: " << list[i].major << " -Average score: " << list[i].avgScore << "\n";
                     }
                 }
                 if (epmtyList == true)
