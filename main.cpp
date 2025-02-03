@@ -4,7 +4,7 @@
 using namespace std;
 struct student
 {
-    int code;
+    int id;
     string firstName;
     string lastName;
     string major;
@@ -24,19 +24,19 @@ int main()
     int counter = 0;
     do
     {
-        cout << "1-Add students\n2-Add Info about student\n3-Edit a student Info\n4-Show students list\n5-Show academic record\n6-exit\nChoose your option : ";
+        cout << "1-Add students\n2-Add Info about student\n3-Edit a student Info\n4-Delete a student info\n5-Show students list\n6-Show academic record\n7-exit\nChoose your option : ";
         cin >> task;
         switch (task)
         {
-        case 1:
-            
+        case 1:{
+
             if(haveStudent == 0){
                 for(int i=0; i < listSize; i++){
                     bool isMajor = false;
                     cout << "Enter student full name : \n";
                     cin >> list[i].firstName >> list[i].lastName;
                     cout << "Enter student id : \n";
-                    cin >> list[i].code;
+                    cin >> list[i].id;
                     cout << "Enter student major : \n";
                     cin >> list[i].major;
                     for(int j = 0; majorList[j] != "\0"; j++){
@@ -53,20 +53,24 @@ int main()
             else{
                 cout << "You have already entered all students\n";
             }
-            break;
-        case 2:
-            missId:
-            int tempId;
-            cout << "Enter id of student you want to add info about\n";
-            cin >> tempId;
-            int index= -1;
-            for(int i = 0; i < listSize; i++){
-                if(list[i].code == tempId)
-                    index = i;
+        }break;
+        case 2:{
+            if(haveStudent == 0){
+                cout << "You don`t have a student yet\n";
+                continue;
             }
-            if (index == -1){
+            missIdAdd:
+            int tempIdadd;
+            cout << "Enter id of student you want to add info about\n";
+            cin >> tempIdadd;
+            int addIndex= -1;
+            for(int i = 0; i < listSize; i++){
+                if(list[i].id == tempIdadd)
+                    addIndex = i;
+            }
+            if (addIndex == -1){
                 cout << "There is no student with this id, Try again!\n";
-                goto missId;
+                goto missIdAdd;
             }
             else{
                 int point;
@@ -77,22 +81,87 @@ int main()
                     if(sub == "quit")
                         break;
                     cin >> point;
-                    list[index].subjects.push_back(sub);
-                    list[index].scores.push_back(point);
-                    list[index].avgScore += point;
+                    list[addIndex].subjects.push_back(sub);
+                    list[addIndex].scores.push_back(point);
+                    list[addIndex].avgScore += point;
                 }while (1);
-                list[index].avgScore /= list[index].scores.size();
+                list[addIndex].avgScore /= list[addIndex].scores.size();
             }
-            break;
-        case 3:
-            break;
-        case 4:
-            break;
-        case 5:
-            break;
-        case 6:
-            break;
+        }break;
+        case 3:{
+            if(haveStudent == 0){
+                cout << "You don`t have a student yet\n";
+                continue;
+            }
+            missIdEdit:
+            int tempIdEdit;
+            cout << "Enter id of student you want to edit his/her info\n";
+            cin >> tempIdEdit;
+            int editIndex= -1;
+            for(int i = 0; i < listSize; i++){
+                if(list[i].id == tempIdEdit)
+                    editIndex = i;
+            }
+            if (editIndex == -1){
+                cout << "There is no student with this id, Try again!\n";
+                goto missIdEdit;
+            }
+            else{
+                string editTask;
+                missEditTask:
+                cout << "Enter the part you wnat to edit (\'name\' , \'id\' , \'major\' , \'subject\'): ";
+                cin >> editTask;
+                if(editTask == "name"){
+                    cout << "Enter student new full name: \n";
+                    cin >> list[editIndex].firstName >> list[editIndex].lastName;
+                }
+                else if(editTask == "id"){
+                    cout << "Enter student new id : \n";
+                    cin >> list[editIndex].id;
+                }
+                else if(editTask =="major"){
+                    cout << "Enter student new major : \n";
+                    cin >> list[editIndex].major;
+                }
+                else if(editTask == "subject"){
+                    string editSub,newSub;
+                    float newScore = 0;
+                    missEditSub:
+                    bool isSub = 0;
+                    for(int i = 0; i < list[editIndex].subjects.size(); i++){
+                        cout << i+1 << "-" << list[editIndex].subjects[i] << " " << list[editIndex].scores[i] << "\n";
+                    }
+                    cout << "Enter the subject you want to edit : ";
+                    cin >> editSub;
+                    for(int i = 0; i < list[editIndex].subjects.size(); i++){
+                        if(editSub == list[editIndex].subjects[i] && isSub == 0){
+                            cout << "Enter your student new subject and new score : ";
+                            cin >> newSub >> newScore;
+                            list[editIndex].subjects[i] = newSub;
+                            list[editIndex].scores[i] = newScore;
+                            isSub = 1;
+                        }
+                    }
+                    if(isSub == 0){
+                        cout << "Please enter a valid subject\n";
+                        goto missEditSub;
+                    }
+                }
+                else{
+                    cout << "Please enter a valid part\n";
+                    goto missEditTask;
+                }
+            }
+        }break;
+        // case 4:{
+        // }break;
+        // case 5:{
+        // }break;
+        // case 6:{
+        // }break;
+        // case 7:{
+        // }break;
         }
-    } while (task <= 6);
+    } while (task <= 7);
     return 0;
 }
