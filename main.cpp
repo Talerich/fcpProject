@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <limits>
 using namespace std;
 struct student
 {
@@ -9,9 +10,10 @@ struct student
     string lastName;
     string major;
     vector<string> subjects;
-    vector<int> units;
+    vector<float> units;
     vector<float> scores;
     float avgScore = 0;
+    float unitSum = 0;
 };
 void sortList(student a[], int n){
     for(int i=0; i < n; i++){
@@ -73,27 +75,26 @@ int main()
                 continue;
             }
             missIdAdd:
-            int tempIdadd;
+            int tempIdadd = -1;
             cout << "Enter id of student you want to add info about\n";
             cin >> tempIdadd;
             int addIndex= -1;
             for(int i = 0; i < listSize; i++){
-                if(list[i].id == tempIdadd)
+                if(list[i].id == tempIdadd){
                     addIndex = i;
+                }
             }
             if (addIndex == -1){
                 cout << "There is no student with this id, Try again!\n";
                 goto missIdAdd;
             }
             else{
-                int point,uni;
-                float uniCounter = 0;
+                float point,uni;
                 string sub;
                 do{
                     cout << "Enter your student subject, unit of subject and score : (Enter \'quit\' to return to menu)\n";
                     cin >> sub;
                     if(sub == "quit"){
-                        sortList(list,listSize);
                         break;
                     }
                     cin >> uni;
@@ -101,10 +102,13 @@ int main()
                     list[addIndex].subjects.push_back(sub);
                     list[addIndex].units.push_back(uni);
                     list[addIndex].scores.push_back(point);
-                    list[addIndex].avgScore += point * uni;
-                    uniCounter += uni;
+                    list[addIndex].avgScore += float(point * uni);
+                    cin.ignore(numeric_limits<streamsize>::max(),'\n');
                 }while (1);
-                list[addIndex].avgScore /= uniCounter;
+                for(int i = 0; i < list[addIndex].units.size(); i++){
+                    list[addIndex].unitSum += list[addIndex].units[i];
+                }
+                list[addIndex].avgScore /= list[addIndex].unitSum;
             }
         }break;
         case 3:{
@@ -157,10 +161,14 @@ int main()
                         if(editSub == list[editIndex].subjects[i] && isEditSub == 0){
                             cout << "Enter your student new subject, new unit of subject and new score : ";
                             cin >> newSub >> newUnit >> newScore;
+                            list[editIndex].avgScore *= list[editIndex].unitSum;
+                            list[editIndex].avgScore -= (list[editIndex].scores[i] * list[editIndex].units[i]);
+                            list[editIndex].unitSum = list[editIndex].unitSum - list[editIndex].units[i] + newUnit;
                             list[editIndex].subjects[i] = newSub;
                             list[editIndex].units[i] = newUnit;
                             list[editIndex].scores[i] = newScore;
-                            sortList(list,listSize);
+                            list[editIndex].avgScore += (list[editIndex].scores[i] * list[editIndex].units[i]);
+                            list[editIndex].avgScore /= list[editIndex].unitSum;
                             isEditSub = 1;
                         }
                     }
@@ -213,9 +221,12 @@ int main()
                     bool isDeleteSub;
                     for(int i = 0; i < list[deleteIndex].subjects.size(); i++){
                         if(deleteSub == list[deleteIndex].subjects[i]){
+                            list[deleteIndex].avgScore *= list[deleteIndex].unitSum;
+                            list[deleteIndex].avgScore -= (list[deleteIndex].scores[i] * list[deleteIndex].units[i]);
                             list[deleteIndex].subjects.erase(list[deleteIndex].subjects.begin() + i);
                             list[deleteIndex].scores.erase(list[deleteIndex].scores.begin() + i);
-                            sortList(list,listSize);
+                            list[deleteIndex].unitSum -= list[deleteIndex].units[i];
+                            list[deleteIndex].avgScore /= list[deleteIndex].unitSum;
                             isDeleteSub = true;
                             cout << "Subject " << deleteSub << " has been deleted\n";
                         }
@@ -231,20 +242,31 @@ int main()
                 }
             }
         }break;
-        // case 5:{
-        //     missShowList:
-        //     string showList;
-        //     cout << "1-All students\n";
-        //     for(int i = 0; i < counter; i++){
-        //         cout << i+2 << "-" << majorList[i] << "\n";
-        //     }
-        //     cout << "Enter the major you wnat to see its student or enter all : ";
-        //     cin >> showList;
-        //     if(showList == "all"){
-        //         for(;;);
-        //     }
-
-        // }break;
+        case 5:{
+            missShowList:
+            string showList;
+            sortList(list,listSize);
+            cout << "1-All students\n";
+            for(int i = 0; i < counter; i++){
+                cout << i+2 << "-" << majorList[i] << "\n";
+            }
+            cout << "Enter the major you wnat to see its student or enter all : ";
+            cin >> showList;
+            if(showList == "all"){
+                for(int i = 0; i < listSize; i++){
+                    if(list[i].id != -1){
+                        cout << i+1 << "-" << list[i].firstName << " " << list[i].lastName << " -Id: "<< list[i].id << " -Major: " << list[i].major << " -Average score: " << list[i].avgScore << "\n";
+                    }
+                }
+            }
+            else{
+                for(int i = 0; i < listSize; i++){
+                    if(list[i].major == showList){
+                        cout << i+1 << "-" << list[i].firstName << " " << list[i].lastName << " -Id: "<< list[i].id << " -Major: " << list[i].major << " -Average score: " << list[i].avgScore << "\n";
+                    }
+                }
+            }
+        }break;
         // case 6:{
         // }break;
         // case 7:{
