@@ -34,13 +34,18 @@ void sortList(student a[], int n)
 int main()
 {
     int listSize = 0;
+unvalidSize:
     cout << "Enter the number of student you have : ";
     cin >> listSize;
+    if (listSize < 1)
+    {
+        cout << "Please enter a number greater than 0\n";
+        goto unvalidSize;
+    }
     student list[listSize];
-    string majorList[listSize];
+    vector<string> majorList;
     int task;
     bool haveStudent = 0;
-    int counter = 0;
     do
     {
         cout << "1-Add students\n2-Add Info about student\n3-Edit a student Info\n4-Delete a student info\n5-Show students list\n6-Show academic record\n7-exit\nChoose your option : ";
@@ -56,8 +61,27 @@ int main()
                     bool isMajor = false;
                     cout << "Enter student full name : \n";
                     cin >> list[i].firstName >> list[i].lastName;
+                notUniqeId:
                     cout << "Enter student id : \n";
-                    cin >> list[i].id;
+                    int tempId;
+                    cin >> tempId;
+                    if (tempId > 0)
+                    {
+                        for (int j = 0; j <= i; j++)
+                        {
+                            if (list[j].id == tempId)
+                            {
+                                cout << "This Id has been used before, Please enter a different id\n";
+                                goto notUniqeId;
+                            }
+                        }
+                        list[i].id = tempId;
+                    }
+                    else
+                    {
+                        cout << "This is a invalid Id, Try again";
+                        goto notUniqeId;
+                    }
                     cout << "Enter student major : \n";
                     cin >> list[i].major;
                     for (int j = 0; majorList[j] != "\0"; j++)
@@ -67,8 +91,7 @@ int main()
                     }
                     if (!isMajor)
                     {
-                        majorList[counter] = list[i].major;
-                        counter++;
+                        majorList.push_back(list[i].major);
                     }
                 }
                 haveStudent = 1;
@@ -115,8 +138,20 @@ int main()
                     {
                         break;
                     }
+                unvalidUnit:
                     cin >> uni;
+                    if (uni < 1)
+                    {
+                        cout << "This is a unvalid amount of unit, Try again\n";
+                        goto unvalidUnit;
+                    }
+                unvalidPoint:
                     cin >> point;
+                    if ((point < 0) || (point > 20))
+                    {
+                        cout << "Please enter a value between 0 and 20\n";
+                        goto unvalidPoint;
+                    }
                     list[addIndex].subjects.push_back(sub);
                     list[addIndex].units.push_back(uni);
                     list[addIndex].scores.push_back(point);
@@ -166,13 +201,48 @@ int main()
                 }
                 else if (editTask == "id")
                 {
+                notUniqeEditId:
                     cout << "Enter student new id : \n";
                     cin >> list[editIndex].id;
+                    if (list[editIndex].id > 0)
+                    {
+                        for (int j = 0; j <= listSize; j++)
+                        {
+                            if (list[j].id == list[editIndex].id)
+                            {
+                                cout << "This Id has been used before, Please enter a different id\n";
+                                goto notUniqeEditId;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        cout << "This is a invalid Id, Try again";
+                        goto notUniqeEditId;
+                    }
                 }
                 else if (editTask == "major")
                 {
+                    bool uniqeMajor = true;
+                    for (int i = 0; i < listSize; i++)
+                    {
+                        if (i == editIndex)
+                        {
+                            continue;
+                        }
+                        if (list[i].major == list[editIndex].major)
+                        {
+                            uniqeMajor = false;
+                            break;
+                        }
+                    }
                     cout << "Enter student new major : \n";
                     cin >> list[editIndex].major;
+                    if (uniqeMajor)
+                    {
+                        majorList.erase(majorList.begin() + editIndex);
+                        majorList.push_back(list[editIndex].major);
+                    }
                 }
                 else if (editTask == "subject")
                 {
@@ -191,8 +261,24 @@ int main()
                     {
                         if (editSub == list[editIndex].subjects[i] && isEditSub == 0)
                         {
-                            cout << "Enter your student new subject, new unit of subject and new score : ";
-                            cin >> newSub >> newUnit >> newScore;
+                            cout << "Enter your student new subject : ";
+                            cin >> newSub;
+                        unvalidEditUnit:
+                            cout << "Enter the subject new unit : ";
+                            cin >> newUnit;
+                            if (newUnit < 1)
+                            {
+                                cout << "This is a unvalid amount of unit, Try again\n";
+                                goto unvalidEditUnit;
+                            }
+                        unvalidEditPoint:
+                            cout << "Enter the subject new score : ";
+                            cin >> newScore;
+                            if ((newScore < 0) || (newScore > 20))
+                            {
+                                cout << "Please enter a value between 0 and 20\n";
+                                goto unvalidEditPoint;
+                            }
                             list[editIndex].avgScore *= list[editIndex].unitSum;
                             list[editIndex].avgScore -= (list[editIndex].scores[i] * list[editIndex].units[i]);
                             list[editIndex].unitSum = list[editIndex].unitSum - list[editIndex].units[i] + newUnit;
@@ -249,6 +335,23 @@ int main()
                 if (DeleteTask == "student")
                 {
                     cout << "Student " << tempIdDelete << " has been deleted\n";
+                    bool uniqeDeleteMajor = true;
+                    for (int i = 0; i < listSize; i++)
+                    {
+                        if (i == deleteIndex)
+                        {
+                            continue;
+                        }
+                        if (list[i].major == list[deleteIndex].major)
+                        {
+                            uniqeDeleteMajor = false;
+                            break;
+                        }
+                    }
+                    if (uniqeDeleteMajor)
+                    {
+                        majorList.erase(majorList.begin() + deleteIndex);
+                    }
                     list[deleteIndex].id = -1;
                 }
                 else if (DeleteTask == "subject")
@@ -296,7 +399,7 @@ int main()
             string showList;
             sortList(list, listSize);
             cout << "1-All students\n";
-            for (int i = 0; i < counter; i++)
+            for (int i = 0; i < majorList.size(); i++)
             {
                 cout << i + 2 << "-" << majorList[i] << "\n";
             }
@@ -314,12 +417,19 @@ int main()
             }
             else
             {
+                bool epmtyList = true;
                 for (int i = 0; i < listSize; i++)
                 {
                     if (list[i].major == showList)
                     {
+                        epmtyList = false;
                         cout << i + 1 << "-" << list[i].firstName << " " << list[i].lastName << " -Id: " << list[i].id << " -Major: " << list[i].major << " -Average score: " << list[i].avgScore << "\n";
                     }
+                }
+                if (epmtyList == true)
+                {
+                    cout << "There is no student in this major\n";
+                    goto missShowList;
                 }
             }
         }
