@@ -13,6 +13,18 @@ struct student
     vector<float> scores;
     float avgScore = 0;
 };
+void sortList(student a[], int n){
+    for(int i=0; i < n; i++){
+        for(int j=i+1; j<n; j++){
+            student b;
+            if(a[j].avgScore >= a[i].avgScore){
+                b=a[j];
+                a[j] = a[i];
+                a[i] = b;
+            }
+        }
+    }
+}
 int main()
 {
     int listSize=0;
@@ -74,13 +86,16 @@ int main()
                 goto missIdAdd;
             }
             else{
-                int point,uni,uniCounter = 0;
+                int point,uni;
+                float uniCounter = 0;
                 string sub;
                 do{
                     cout << "Enter your student subject, unit of subject and score : (Enter \'quit\' to return to menu)\n";
                     cin >> sub;
-                    if(sub == "quit")
+                    if(sub == "quit"){
+                        sortList(list,listSize);
                         break;
+                    }
                     cin >> uni;
                     cin >> point;
                     list[addIndex].subjects.push_back(sub);
@@ -145,6 +160,7 @@ int main()
                             list[editIndex].subjects[i] = newSub;
                             list[editIndex].units[i] = newUnit;
                             list[editIndex].scores[i] = newScore;
+                            sortList(list,listSize);
                             isEditSub = 1;
                         }
                     }
@@ -199,6 +215,7 @@ int main()
                         if(deleteSub == list[deleteIndex].subjects[i]){
                             list[deleteIndex].subjects.erase(list[deleteIndex].subjects.begin() + i);
                             list[deleteIndex].scores.erase(list[deleteIndex].scores.begin() + i);
+                            sortList(list,listSize);
                             isDeleteSub = true;
                             cout << "Subject " << deleteSub << " has been deleted\n";
                         }
@@ -215,6 +232,18 @@ int main()
             }
         }break;
         // case 5:{
+        //     missShowList:
+        //     string showList;
+        //     cout << "1-All students\n";
+        //     for(int i = 0; i < counter; i++){
+        //         cout << i+2 << "-" << majorList[i] << "\n";
+        //     }
+        //     cout << "Enter the major you wnat to see its student or enter all : ";
+        //     cin >> showList;
+        //     if(showList == "all"){
+        //         for(;;);
+        //     }
+
         // }break;
         // case 6:{
         // }break;
