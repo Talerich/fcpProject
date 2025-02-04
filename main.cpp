@@ -44,7 +44,6 @@ int main()
         switch (task)
         {
         case 1:{
-
             if(haveStudent == 0){
                 for(int i=0; i < listSize; i++){
                     bool isMajor = false;
@@ -295,9 +294,27 @@ int main()
                 goto missRecordId;
             }
         }break;
-        // case 7:{
-        // }break;
+        case 7:{
+            missCloser:
+            string closeCheck;
+            cout << "Are you sure you want to close the program?(yes/no) : ";
+            cin >> closeCheck;
+            if(closeCheck == "yes"){
+                cout << "Thank you for using our program!!";
+                return 0;
+            }
+            else if(closeCheck == "no"){
+                continue;
+            }
+            else{
+                cout << "Please enter a valid answer\n";
+                goto missCloser;
+            }
+        }break;
+        default:{
+            cout << "Please enter a valid option\n";
+        }break;
         }
-    } while (task <= 7);
+    } while (true);
     return 0;
 }
