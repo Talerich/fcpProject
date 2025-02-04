@@ -267,8 +267,34 @@ int main()
                 }
             }
         }break;
-        // case 6:{
-        // }break;
+
+            case 6:{
+            missRecordId:
+            for(int i =0; i < listSize; i++){
+                cout << i+1 << "-" << list[i].firstName << " " << list[i].lastName << " -Id:" << list[i].id << "\n";
+            }
+            cout << "Enter the Id of studnet you want their academic record :";
+            int recordId;
+            cin >> recordId;
+            bool isRecord = 0;
+            for(int i = 0; i < listSize; i++){
+                if(list[i].id == recordId){
+                    cout << "Name : " << list[i].firstName << " " << list[i].lastName << "\tId : " << list[i].id <<"\n";
+                    cout << "Major : " << list[i].major << "\n";
+                    cout << "Subjects :\n";
+                    for(int j = 0; j < list[i].subjects.size(); j++){
+                        cout << j+1 << "-" << list[i].subjects[j] << "\tUnit : " << list[i].units[j] << "\tScore : " << list[i].scores[j] << "\n";
+                    }
+                    cout << "Sum of all units : " << list[i].unitSum << "\tAvg score : " << list[i].avgScore << "\n";
+                    isRecord = 1;
+                    break;
+                }
+            }
+            if(isRecord == 0){
+                cout << "Please enter a valid id\n";
+                goto missRecordId;
+            }
+        }break;
         // case 7:{
         // }break;
         }
